@@ -1,0 +1,38 @@
+#include<iostream>
+#include<math.h>
+#include<opencv2\opencv.hpp>
+using namespace std;
+using namespace cv;
+#define PI 3.1415926;
+void avg_filter(uchar* smooth,int width,int height)
+{
+	int sum = width * height * sizeof(uchar);
+	uchar*corrupt = (uchar*)malloc(sum);
+	memcpy((char*)corrupt, (char*)smooth, sum);
+	for (int j = 1; j < height - 1; j++)
+	{
+		for (int i = 1; i < width - 1; i++)
+		{
+			smooth[j*width + i] = (corrupt[(j - 1)*width + (i - 1)] + corrupt[(j - 1)*width + (i)] + corrupt[(j - 1)*width + (i + 1)] + corrupt[(j)*width + (i - 1)] + corrupt[(j)*width + (i)]
+				+ corrupt[(j)*width + (i + 1)] + corrupt[(j + 1)*width + (i - 1)] + corrupt[(j + 1)*width + (i)] + corrupt[(j + 1)*width + (i + 1)] ) / 9;
+		}
+	}
+
+}
+int main()
+{
+
+	IplImage*src = cvLoadImage("ken.jpg");
+	
+	avg_filter((unsigned char*)src->imageData, src->width, src->height);
+	namedWindow("windowken",0);
+	cvShowImage("windowken",src);
+	waitKey(0);
+	cvReleaseImage(&src);
+	destroyWindow("windowken");
+	
+
+	//system("pause");
+	
+	return 0;
+}
